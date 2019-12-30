@@ -12,7 +12,7 @@ class RecordsList extends React.Component {
     }
 
     componentDidMount() {
-        fetch('https://api.discogs.com/artists/1?callback=callbackname')
+        fetch('https://api.discogs.com/database/search?q=Nirvana&token=abcxyz123456')
             .then(res => res.json())
             .then(
                 (result) => {
