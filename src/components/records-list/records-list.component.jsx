@@ -1,37 +1,31 @@
 import React from 'react'; 
 
-class RecordsList extends React.Component {
-    constructor() {
-        super(); 
+const API = 'https://hn.algolia.com/api/v1/search?query=';
+const DEFAULT_QUERY = 'redux';
+
+class NewsList extends React.Component {
+    constructor(props) {
+        super(props); 
 
         this.state = {
             error: null, 
             isLoaded: false,
-            records: [], 
+            hits: [], 
         }
     }
 
     componentDidMount() {
-        fetch('https://api.discogs.com/database/search?q=Nirvana&token=abcxyz123456')
+        this.setState({ isLoading: true})
+
+        fetch(API + DEFAULT_QUERY)
             .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        isLoaded: true, 
-                        items: result.items
-                    }); 
-                },
-                (error) => {
-                    this.setState({
-                        isLoaded: true, 
-                        error
-                    }); 
-                }
-            )
+            .then(data => this.setState({ hits: data.hits, isLoading: false }))
+            .catch(error => this.setState({error, isLoading: false}));
     }
 
     render() {
-        const { error, isLoaded, records } = this.state;
+        console.log(this.state.hits);
+        const { error, isLoaded, hits } = this.state;
         if (error) {
             return <div>Error: {error.message}</div>
         } else if (!isLoaded) {
@@ -39,9 +33,9 @@ class RecordsList extends React.Component {
         } else {
             return (
                 <ul>
-                    {records.map(record => (
-                        <li key={record.id}>
-                            {record.title} {record.body}
+                    {hits.map(hit => (
+                        <li key={hit.objectID}>
+                           <a href={hit.url}>{hit.title}</a>
                         </li>
                     ))}
                 </ul>
@@ -50,4 +44,4 @@ class RecordsList extends React.Component {
     }
 }
 
-export default RecordsList;
+export default NewsList;
